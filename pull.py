@@ -44,7 +44,7 @@ def pull_nuclei_mols(file, atoms = []):
       
       if len(line.split(',')) == 4:
           
-          atommic_num = int(line.split(',')[2])
+          atomic_num = int(line.split(',')[2])
           atomic_nums.append(atomic_num)
       
   if not all([x in nuclei for x in atomic_nums]):
