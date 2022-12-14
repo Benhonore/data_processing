@@ -4,6 +4,8 @@ from sklearn.metrics import mean_absolute_error as mae
 from sklearn.metrics import mean_squared_error as mse
 from math import sqrt
 
+### Passing this function a dataframe that contans true DFT shifts and IMPRESSION predicted shifts will print put a model performance summary for carbon and proton.
+
 ref={'0':'6','1':'5','2':'4','3':'3','4':'2', '5':'1', '6':'0'}
 
 def performance_summary(df):
@@ -20,6 +22,9 @@ def performance_summary(df):
     print(f"MaxE:{np.max(abs(proton_df['shift']-proton_df['predicted_shift']))}")
 
 
+### This function will rank the closeness in shift prediction for each conformer to each other conformer in a dataframe of IMPRESSION predicted shifts for multiple
+### conformers for the atom type and molecule parsed.
+    
 def rank_conf_prediction(name, nucleus, shift_df):
 
     df=pd.DataFrame()
