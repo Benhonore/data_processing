@@ -4,7 +4,7 @@
 
 ### Requirements:
 
-#### - mol_translator
+#### - mol_translator (https://github.com/Buttsgroup/mol_translator.git)
 #### - RDKit
 #### - Openbabel
 #### - Pandas
