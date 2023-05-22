@@ -6,7 +6,7 @@ from math import sqrt
 
 ### Passing this function a dataframe that contans true DFT shifts and IMPRESSION predicted shifts will print put a model performance summary for carbon and proton.
 
-ref={'0':'6','1':'5','2':'4','3':'3','4':'2', '5':'1', '6':'0'}
+ref={'0':'10','1':'9','2':'8','3':'7','4':'6', '5':'5', '6':'4', '7': '3', '8': '2', '9': '1', '10': '0'}
 
 def performance_summary(df):
     carbon_df=df[df['typestr']=='C']
@@ -28,19 +28,19 @@ def performance_summary(df):
 def rank_conf_prediction(name, nucleus, shift_df):
 
     df=pd.DataFrame()
-    for i in range(10):
+    for i in range(50):
         try:
-            df=df.append(shift_df[shift_df['molecule_name']==f'autoenrich_autoenrich_{name}_{i}_conf'], ignore_index=True)
+            df=df.append(shift_df[shift_df['molecule_name']==f'{name}_conf_{i}'], ignore_index=True)
         except:
             print(f'{i}th conformer missing')
             continue
 
     num_confs=len(df["molecule_name"].unique())
     #print(f'{num_confs} conformers')
-    if len(df['molecule_name'].unique()) < 6:
+    if len(df['molecule_name'].unique()) < 10:
         count=len(df['molecule_name'].unique())
     else:
-        count=6
+        count=10
 
     dic={}
 
@@ -91,4 +91,4 @@ def rank_conf_prediction(name, nucleus, shift_df):
     c_rank_df = pd.DataFrame(f)
     c_rank_df.insert(loc=0, column ='Name', value=c_rank_df.columns)
 
-    return c, num_confs
+    return c, num_confs, comp, c_rank_df, c_df
