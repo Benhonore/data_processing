@@ -61,8 +61,8 @@ def make_2d(atom_df, pair_df=pd.DataFrame()):
 		
 		assert len(pair_df) == len(bo), 'problem! atoms and pairs dont seem to line up..'
 	
-		for i in ['nmr_type', 'coupling', 'path_len']:
-			pair_df[i] = 0
+		pair_df['nmr_type'] = 0
+		pair_df['coupling'] = 0
 
 		pair_df['3d_distance'] = pair_df['dist']
 		pair_df['dist'] = bo
