@@ -6,16 +6,15 @@ from tqdm import tqdm
 ### 2D-equivalent protons, changing distance to bond order and zeroing out coupling/nmr_type/path_len
 
 
-def make_2d(atom_df, pair_df, name):
+def make_2d(atom_df, pair_df=pd.DataFrame()):
 
 	print('updating atoms..')
 
-	df=pd.read_pickle(atom_df)
-	df['averaged_shift'] = 0
+	atom_df['averaged_shift'] = 0
 
-	for molecule in tqdm(np.unique(df['molecule_name'])):
+	for molecule in tqdm(np.unique(atom_df['molecule_name'])):
 
-		mol_df = df[df['molecule_name'] == molecule]
+		mol_df = atom_df[atom_df['molecule_name'] == molecule]
 		d = {}
 
 		for atom in range(len(mol_df)):
@@ -40,36 +39,32 @@ def make_2d(atom_df, pair_df, name):
 			i = mol_df.index[mol_df['atom_index']==proton].to_list()[0]
 			mol_df.at[i, 'averaged_shift'] = ave[proton]
 
-		df[df['molecule_name']==molecule] = mol_df
+		atom_df[atom_df['molecule_name']==molecule] = mol_df
 
 
-	for i in range(len(df)):
-		if df.iloc[i]['averaged_shift'] ==0:
-			df.at[i, 'averaged_shift'] = df.iloc[i]['shift']
+	for i in range(len(atom_df)):
+		if atom_df.iloc[i]['averaged_shift'] ==0:
+			atom_df.at[i, 'averaged_shift'] = atom_df.iloc[i]['shift']
 
-	df.rename(columns={'shift':'3d_shift', 'averaged_shift':'shift'}, inplace=True)
-	
-	df.to_pickle('2d_' + name + '_atoms.pkl')
+	atom_df.rename(columns={'shift':'3d_shift', 'averaged_shift':'shift'}, inplace=True)
+		
 
 	print('updating pairs..')
 
-	bo = []
+	if len(pair_df)==0:
+		return atom_df, pair_df
+
+	else:	 
+		bo = []	
+		for atom in tqdm(range(len(atom_df))):
+			bo.extend(list(atom_df.iloc[atom]['conn']))
+		
+		assert len(pair_df) == len(bo), 'problem! atoms and pairs dont seem to line up..'
 	
-	for atom in tqdm(range(len(df))):
-		for i in df.iloc[atom]['conn']:
-			bo.append(i)
+		for i in ['nmr_type', 'coupling', 'path_len']:
+			pair_df[i] = 0
 
-	dc = pd.read_pickle(pair_df)
+		pair_df['3d_distance'] = pair_df['dist']
+		pair_df['dist'] = bo
 	
-	indices = ['nmr_type', 'coupling', 'path_len']
-	for i in indices:
-		dc[i] = 0
-
-	dc['3d_distance'] = dc['dist']
-	
-	assert len(dc) == len(bo), 'problem! atoms and pairs dont seem to line up..'
-
-	dc['dist'] = bo
-
-	dc.to_pickle('2d_' + name + '_pairs.pkl')
-
+		return atom_df, pair_df
